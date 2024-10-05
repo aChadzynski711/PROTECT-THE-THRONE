@@ -1,4 +1,4 @@
-using System.Collections;
+/* using System.Collections;
 using UnityEngine;
 
 public class DayCycle : MonoBehaviour
@@ -56,3 +56,4 @@ public class DayCycle : MonoBehaviour
         StartCoroutine(DayNightCycle());
     }
 }
+ */

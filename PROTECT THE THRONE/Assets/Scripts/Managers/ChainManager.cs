@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Reflection.Emit;
 using UnityEngine;
 
 public class ChainManager : MonoBehaviour
@@ -20,6 +21,7 @@ public class ChainManager : MonoBehaviour
 
 
     //----------------------------------------------------------------------------------------------------------------------------//
+    // General
 
 
     // Awake
@@ -38,6 +40,7 @@ public class ChainManager : MonoBehaviour
     }
 
 
+    // Start
     private void Start()
     {
         InitChains();
@@ -46,7 +49,7 @@ public class ChainManager : MonoBehaviour
 
 
     //----------------------------------------------------------------------------------------------------------------------------//
-
+    // Chain Management
 
 
     // Init chains
@@ -113,8 +116,5 @@ public class ChainManager : MonoBehaviour
     {
         chainImageHandler.UpdateCurrentSprite(chain, sprite);
     }
-
-
-
 
 }

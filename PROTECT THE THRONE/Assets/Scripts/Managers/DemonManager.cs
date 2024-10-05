@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Events;
 
 public class DemonManager : MonoBehaviour
 {
@@ -11,10 +10,9 @@ public class DemonManager : MonoBehaviour
     // Lists
     public List<Demon> demonsOwned = new List<Demon>();
 
-    // Events
-    //public UnityEvent<Demon> removeDemon;
-
+    // External References
     private ExpeditionPageHandler expeditionPageHandler;
+
 
 
     //----------------------------------------------------------------------------------------------------------------------------//
@@ -56,6 +54,21 @@ public class DemonManager : MonoBehaviour
     }
 
 
+    // Removal of demon
+    public void RemoveDemon(Demon demonToRemove)
+    {
+
+        // Remove the demon 
+        ChainManager.Instance.UpdateChainImage(demonToRemove.assignedChain, ChainSprite.Available);
+        ChainManager.Instance.RemoveDemonFromChain(demonToRemove);
+
+
+        // Call this at the end so that all the other functions can safely have a reference (just to make sure)
+        demonsOwned.Remove(demonToRemove);
+        Destroy(demonToRemove);
+    }
+
+
 
     //----------------------------------------------------------------------------------------------------------------------------//
     // Demon Selection
@@ -77,10 +90,7 @@ public class DemonManager : MonoBehaviour
     }
 
 
-    // Gold Generation
-
-
-    // Generate gold based on unlocked demons
+    /*     // Generate gold based on unlocked demons
     public void GenerateGold()
     {
         foreach (Demon demon in demonsOwned)
@@ -88,23 +98,9 @@ public class DemonManager : MonoBehaviour
             // Adds gold based on the demons base gold generation tick as well as the chain level
             CurrencyManager.Instance.AddResource(CurrencyManager.ResourceType.gold, demon.goldGenerationPerTick * demon.assignedChain.chainLevel);
         }
-    }
+    } */
 
 
-    // Removal of demon
-    public void RemoveDemon(Demon demonToRemove)
-    {
-        /*
-            This sends out an event to:
-            ChainManager.RemoveDemon
-            ChainImageHandler.UpdateCurrentSprite
-        */
-        ChainManager.Instance.UpdateChainImage(demonToRemove.assignedChain, ChainSprite.Available);
-        ChainManager.Instance.RemoveDemonFromChain(demonToRemove);
 
-
-        // Call this at the end so that all the other functions can safely have a reference (just to make sure)
-        demonsOwned.Remove(demonToRemove);
-    }
 
 }
