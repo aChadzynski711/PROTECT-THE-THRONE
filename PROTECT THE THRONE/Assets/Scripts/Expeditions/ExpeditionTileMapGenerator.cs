@@ -1,12 +1,14 @@
 using System;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class ExpeditionTileMapGenerator : MonoBehaviour
 {
 	// Dictionary to store each and every tile
-	private Dictionary<Tuple<int, int>, Tile> tiles;
+	public Dictionary<Tuple<int, int>, Tile> tiles;
 
+	public List<ExpeditionEnemy> temporaryEnemyList = new List<ExpeditionEnemy>();
 
 	// Col / Row max values
 	private int rows = 4;
@@ -44,14 +46,18 @@ public class ExpeditionTileMapGenerator : MonoBehaviour
 				// Makes the bottom far left corner the starting tile
 				if (colIter == 0 && rowIter == 0)
 				{
-					Tile newTile = new Tile(Tuple.Create(rowIter, colIter), TileType.Start, 1, true);
+					//Tile newTile = new Tile(Tuple.Create(rowIter, colIter), TileType.Start, 1, null);
+					Tile newTile = new Tile(Tuple.Create(rowIter, colIter), TileType.EnemyPopulated, 1, GenerateEnemies());
 					tiles.Add(newTile.position, newTile);
 				}
 				// Otherwise it will create a new random tile and append it to all tiles
 				else
 				{
-					Tile newTile = new Tile(Tuple.Create(rowIter, colIter), GenerateRandomTileType(), 1, false);
+					var tileGenerator = GenerateRandomTileType();
+
+					Tile newTile = new Tile(Tuple.Create(rowIter, colIter), tileGenerator.Item1, 1, tileGenerator.Item2);
 					tiles.Add(newTile.position, newTile);
+
 				}
 			}
 		}
@@ -60,21 +66,31 @@ public class ExpeditionTileMapGenerator : MonoBehaviour
 
 
 	// Generate a random tile based on a roll. This will likely be changed
-	private TileType GenerateRandomTileType()
+	private (TileType, TileContent) GenerateRandomTileType()
 	{
 
 		int tileRoll = UnityEngine.Random.Range(0, 100);
 
-		if (tileRoll <= 20) return TileType.Empty;
-		if (tileRoll <= 35) return TileType.EnemyPopulated;
-		if (tileRoll <= 50) return TileType.AvoidableBarricade;
-		if (tileRoll <= 60) return TileType.UnavoidableBarricade;
-		if (tileRoll <= 80) return TileType.Scavengable;
-		if (tileRoll <= 95) return TileType.MinorLoot;
-		if (tileRoll <= 100) return TileType.MajorLoot;
+		if (tileRoll <= 20) return (TileType.Empty, null);
+		if (tileRoll <= 35) return (TileType.EnemyPopulated, GenerateEnemies());
+		if (tileRoll <= 50) return (TileType.AvoidableBarricade, null);
+		if (tileRoll <= 60) return (TileType.UnavoidableBarricade, null);
+		if (tileRoll <= 80) return (TileType.Scavengable, null);    // Later this must be different to incorporate loot
+		if (tileRoll <= 95) return (TileType.MinorLoot, null);      // So will this
+		if (tileRoll <= 100) return (TileType.MajorLoot, null);     // And of course, this
 
 		// Just in case something fails
-		return TileType.Empty;
+		return (TileType.Empty, null);
+	}
+
+
+	// Generate enemy data
+	private TileContent GenerateEnemies()
+	{
+
+		TileContent tileContentToReturn = new TileContent(temporaryEnemyList);
+
+		return tileContentToReturn;
 	}
 
 
@@ -112,6 +128,16 @@ public class ExpeditionTileMapGenerator : MonoBehaviour
 		return validAdjacentTiles;
 
 	}
+
+
+	// Returns a list of just the tiles
+	public List<Tile> GetAllTiles()
+	{
+		List<Tile> tilesToReturn = new List<Tile>(tiles.Values);
+
+		return tilesToReturn;
+	}
+
 
 
 

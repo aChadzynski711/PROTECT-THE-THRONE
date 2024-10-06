@@ -1,19 +1,21 @@
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
-public class MinimapLogic : MonoBehaviour
+public class ExpeditionBattle : MonoBehaviour
 {
-	// References
-	[SerializeField] private ExpeditionTileMapGenerator expeditionTileMapGenerator;
+	//
 
 
 
 	//----------------------------------------------------------------------------------------------------------------------------//
-	// 
 
 
 
 
-	//
+
+	// Initialize the current battle on the tile
+
 
 
 

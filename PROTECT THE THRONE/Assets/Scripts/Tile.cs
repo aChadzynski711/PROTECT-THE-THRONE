@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 
 public class Tile
@@ -7,35 +8,44 @@ public class Tile
 	public Tuple<int, int> position { get; private set; }
 	public TileType type { get; private set; }
 	public float difficulty;
-	public bool isExplored = false;
+
+
+	public TileContent content { get; private set; }
 
 
 	//----------------------------------------------------------------------------------------------------------------------------//
 	// Constructor
 
 
-	public Tile(Tuple<int, int> tilePos, TileType tileType, float tileDifficulty, bool explored)
+	public Tile(Tuple<int, int> tilePos, TileType tileType, float tileDifficulty, TileContent tileContent)
 	{
 		position = tilePos;
 		type = tileType;
 		difficulty = tileDifficulty;
-		isExplored = explored;
-	}
-
-
-
-	// Helper Functions
-	public bool ContainsEnemies()
-	{
-		return type == TileType.EnemyPopulated;
+		content = tileContent;
 	}
 
 
 	// Add more later on here
+	public void TileExplored()
+	{
+		type = TileType.Explored;
+	}
 
 
 
+}
 
+
+public class TileContent
+{
+	public List<ExpeditionEnemy> enemies;
+	//Loot
+
+	public TileContent(List<ExpeditionEnemy> enemies = null)
+	{
+		this.enemies = enemies ?? new List<ExpeditionEnemy>();
+	}
 }
 
 
@@ -49,4 +59,5 @@ public enum TileType
 	Scavengable,
 	MinorLoot,
 	MajorLoot,
+	Explored,
 }
