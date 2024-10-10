@@ -9,8 +9,8 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b983f25ce3b198b408770c770362c400, type: 3}
-  m_Name: Test2
+  m_Script: {fileID: 11500000, guid: 723d99ea6dfb451428e11a8ef1062c23, type: 3}
+  m_Name: AB
   m_EditorClassIdentifier: 
-  enemyName: test2
-  health: 5
+  damage: 65
+  abilityName: 1

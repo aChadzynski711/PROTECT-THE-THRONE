@@ -4,38 +4,15 @@ using UnityEngine;
 using UnityEngine.Events;
 
 
-public class SummonManager : MonoBehaviour
+public class Summoner : MonoBehaviour
 {
-
-    // Singleton
-    private static SummonManager _instance;
-    public static SummonManager Instance { get { return _instance; } }
 
     // Events
     public UnityEvent<Demon> goldDemonSummonedEvent;    // Later on make it so the event can also pass through a class type of "Trait" which wil affect
                                                         // the demons stats and its performance overall.
 
     // Lists
-    public List<Demon> goldDemons = new List<Demon>();
-
-
-    //----------------------------------------------------------------------------------------------------------------------------//
-
-
-    // Awake
-    private void Awake()
-    {
-        if (_instance != null && _instance != this)
-        {
-            Destroy(gameObject);
-        }
-        else
-        {
-            _instance = this;
-            DontDestroyOnLoad(gameObject);
-        }
-    }
-
+    public List<BaseDemon> baseDemons = new List<BaseDemon>();
 
 
     //----------------------------------------------------------------------------------------------------------------------------//
@@ -50,9 +27,7 @@ public class SummonManager : MonoBehaviour
     {
         targetDemon.demonName = originalDemon.name;
         targetDemon.description = originalDemon.description;
-        targetDemon.goldGenerationPerTick = originalDemon.goldGenerationPerTick;
         targetDemon.selectedForExpedition = originalDemon.selectedForExpedition;
-        targetDemon.demonType = originalDemon.demonType;
     }
 
 
@@ -62,15 +37,15 @@ public class SummonManager : MonoBehaviour
     public void GoldSummon()
     {
 
-        int selectDemonRoll = UnityEngine.Random.Range(0, goldDemons.Count);
+        int selectDemonRoll = UnityEngine.Random.Range(0, baseDemons.Count);
 
         // Ordering is important here. first there is a check to see if there are any available chains to attach a demon to
         // if this is false then currency manager will not deduce the players gold even if they have enough as it goes left to right
         if (ChainManager.Instance.availableChains.Count > 0 && CurrencyManager.Instance.ReduceResource(CurrencyManager.ResourceType.gold, 500))
         {
 
-            Demon selectedDemon = goldDemons[selectDemonRoll];
-            Demon summonedDemon = ScriptableObject.CreateInstance<Demon>();
+            BaseDemon selectedDemon = baseDemons[selectDemonRoll];
+            BaseDemon summonedDemon = ScriptableObject.CreateInstance<BaseDemon>();
 
             CopyDemon(selectedDemon, summonedDemon);
 
@@ -90,7 +65,7 @@ public class SummonManager : MonoBehaviour
 
 
     // Logic for summoning using resources
-    public void ResourceSummon(Action selectResources)
+    public void ResourceSummon()
     {
 
     }

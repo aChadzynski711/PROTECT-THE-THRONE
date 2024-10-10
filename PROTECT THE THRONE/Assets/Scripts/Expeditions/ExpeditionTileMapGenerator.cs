@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class ExpeditionTileMapGenerator : MonoBehaviour
@@ -8,7 +7,9 @@ public class ExpeditionTileMapGenerator : MonoBehaviour
 	// Dictionary to store each and every tile
 	public Dictionary<Tuple<int, int>, Tile> tiles;
 
-	public List<ExpeditionEnemy> temporaryEnemyList = new List<ExpeditionEnemy>();
+	[SerializeField] private List<ExpeditionEnemy> temporaryEnemyList = new List<ExpeditionEnemy>();
+
+	private ExpeditionBattle expeditionBattle;
 
 	// Col / Row max values
 	private int rows = 4;
@@ -19,17 +20,26 @@ public class ExpeditionTileMapGenerator : MonoBehaviour
 	// Generic
 
 
+	// Awake
+	private void Awake()
+	{
+		// This needs to be in awake so that EnemyTile can have a proper reference
+		expeditionBattle = GetComponent<ExpeditionBattle>();
+	}
+
+
+	// Start
 	private void Start()
 	{
 		InitializeMap();
 	}
 
 
-
 	//----------------------------------------------------------------------------------------------------------------------------//
-	// Initializer
+	// Generate Order
 
 
+	// Initialize 
 	public void InitializeMap()
 	{
 		// Get tiles into memory
@@ -43,21 +53,23 @@ public class ExpeditionTileMapGenerator : MonoBehaviour
 			// For every row in the tiles
 			for (int rowIter = 0; rowIter < rows; rowIter++)
 			{
+
+				Tile newTile;
+
 				// Makes the bottom far left corner the starting tile
 				if (colIter == 0 && rowIter == 0)
 				{
 					//Tile newTile = new Tile(Tuple.Create(rowIter, colIter), TileType.Start, 1, null);
-					Tile newTile = new Tile(Tuple.Create(rowIter, colIter), TileType.EnemyPopulated, 1, GenerateEnemies());
+					newTile = new EnemyTile(Tuple.Create(rowIter, colIter), 1, GenerateEnemies(), expeditionBattle);
+
+					//newTile = new EnemyTile(Tuple.Create(rowIter, colIter), TileType.EnemyPopulated, 1, GenerateEnemies());
 					tiles.Add(newTile.position, newTile);
 				}
 				// Otherwise it will create a new random tile and append it to all tiles
 				else
 				{
-					var tileGenerator = GenerateRandomTileType();
-
-					Tile newTile = new Tile(Tuple.Create(rowIter, colIter), tileGenerator.Item1, 1, tileGenerator.Item2);
-					tiles.Add(newTile.position, newTile);
-
+					Tile randomTile = GenerateRandomTile(Tuple.Create(rowIter, colIter));
+					tiles.Add(randomTile.position, randomTile);
 				}
 			}
 		}
@@ -66,31 +78,29 @@ public class ExpeditionTileMapGenerator : MonoBehaviour
 
 
 	// Generate a random tile based on a roll. This will likely be changed
-	private (TileType, TileContent) GenerateRandomTileType()
+	private Tile GenerateRandomTile(Tuple<int, int> position)
 	{
 
 		int tileRoll = UnityEngine.Random.Range(0, 100);
 
-		if (tileRoll <= 20) return (TileType.Empty, null);
-		if (tileRoll <= 35) return (TileType.EnemyPopulated, GenerateEnemies());
-		if (tileRoll <= 50) return (TileType.AvoidableBarricade, null);
-		if (tileRoll <= 60) return (TileType.UnavoidableBarricade, null);
-		if (tileRoll <= 80) return (TileType.Scavengable, null);    // Later this must be different to incorporate loot
-		if (tileRoll <= 95) return (TileType.MinorLoot, null);      // So will this
-		if (tileRoll <= 100) return (TileType.MajorLoot, null);     // And of course, this
+		if (tileRoll <= 20) return new EmptyTile(position, 1);
+		if (tileRoll <= 35) return new EnemyTile(position, 1, GenerateEnemies(), expeditionBattle);
+		//if (tileRoll <= 50) return (TileType.AvoidableBarricade, null);
+		//if (tileRoll <= 60) return (TileType.UnavoidableBarricade, null);
+		//if (tileRoll <= 80) return (TileType.Scavengable, null);    // Later this must be different to incorporate loot
+		//if (tileRoll <= 95) return (TileType.MinorLoot, null);      // So will this
+		//if (tileRoll <= 100) return (TileType.MajorLoot, null);     // And of course, this
 
 		// Just in case something fails
-		return (TileType.Empty, null);
+		return new EmptyTile(position, 1);
 	}
 
 
 	// Generate enemy data
-	private TileContent GenerateEnemies()
+	private List<ExpeditionEnemy> GenerateEnemies()
 	{
-
-		TileContent tileContentToReturn = new TileContent(temporaryEnemyList);
-
-		return tileContentToReturn;
+		// Later on there will be some randomness to this
+		return new List<ExpeditionEnemy>(temporaryEnemyList);
 	}
 
 
@@ -114,7 +124,6 @@ public class ExpeditionTileMapGenerator : MonoBehaviour
 		// This is what will be returned once finding all valid tiles
 		List<Tile> validAdjacentTiles = new List<Tile>();
 
-
 		foreach (Tuple<int, int> position in adjacentPositions)
 		{
 			// If the adjacent tile even exists within the dictionary with the key of position
@@ -126,19 +135,14 @@ public class ExpeditionTileMapGenerator : MonoBehaviour
 		}
 
 		return validAdjacentTiles;
-
 	}
 
 
-	// Returns a list of just the tiles
-	public List<Tile> GetAllTiles()
-	{
-		List<Tile> tilesToReturn = new List<Tile>(tiles.Values);
+	/* 	// Returns a list of just the tiles
+		public List<Tile> GetAllTiles()
+		{
+			List<Tile> tilesToReturn = new List<Tile>(tiles.Values);
 
-		return tilesToReturn;
-	}
-
-
-
-
+			return tilesToReturn;
+		} */
 }

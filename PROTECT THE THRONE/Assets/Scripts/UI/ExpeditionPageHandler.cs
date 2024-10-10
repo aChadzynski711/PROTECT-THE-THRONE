@@ -77,31 +77,8 @@ public class ExpeditionPageHandler : MonoBehaviour
         }
 
 
-        // Survival roll
-        int baseChance = 80;
-        int survivalChance = Random.Range(0, 100);
 
 
-        if (survivalChance > baseChance)
-        {
-            // Failed survival check
-            Debug.LogWarning(selectedDemonsForExpedition[0].demonName + " has died!");
-            DemonManager.Instance.RemoveDemon(selectedDemonsForExpedition[0]);
-
-        }
-        else
-        {
-            // Return with goods
-            CurrencyManager.Instance.AddResource(CurrencyManager.ResourceType.rottedBoneShards, 1);
-
-            Debug.Log("Demon succesful on expedition gathering: 1 Rotted Bone Shard");
-        }
-
-
-        foreach (Demon demon in selectedDemonsForExpedition)
-        {
-            demon.selectedForExpedition = false;
-        }
 
 
         // Reset values

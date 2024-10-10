@@ -14,3 +14,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   enemyName: test1
   health: 5
+  enemySprite: {fileID: 21300000, guid: a03171b893caaa845aa9ffeb1b5f377e, type: 3}
